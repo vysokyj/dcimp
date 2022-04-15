@@ -1,0 +1,50 @@
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 4.4.0">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:tiff="http://ns.adobe.com/tiff/1.0/"
+    xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+    xmlns:exif="http://ns.adobe.com/exif/1.0/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:photoshop="http://ns.adobe.com/photoshop/1.0/"
+   tiff:Model="ILCE-7M2"
+   tiff:Make="SONY"
+   tiff:FileType="JPEG"
+   tiff:ImageWidth="6000"
+   tiff:ImageLength="4000"
+   tiff:Orientation="1"
+   tiff:FNumber="56/10"
+   tiff:XResolution="350/1"
+   tiff:YResolution="350/1"
+   tiff:ResolutionUnit="2"
+   xmp:CreatorTool="ILCE-7M2 v4.01"
+   xmp:Rating="0"
+   exif:ExposureProgram="3"
+   exif:MeteringMode="5"
+   exif:LightSource="0"
+   exif:ExposureMode="0"
+   exif:WhiteBalance="0"
+   exif:FocalLengthIn35mmFilm="63"
+   exif:SceneCaptureType="0"
+   exif:Contrast="0"
+   exif:Saturation="0"
+   exif:Sharpness="0"
+   exif:ISOSpeedRating="100"
+   exif:Flash="16"
+   exif:BitSPerSample="0"
+   exif:ApertureValue="4"
+   exif:MaxApertureValue="1272/256"
+   exif:BrightnessValue="22024/2560"
+   exif:ExposureTime="1/200"
+   exif:ExposureBiasValue="3/10"
+   exif:FocalLength="630/10"
+   exif:GPSAltitudeRef="0"
+   exif:GPSStatus="A"
+   photoshop:DateCreated="2020-11-24T13:20:15.000Z">
+   <dc:description>
+    <rdf:Alt>
+     <rdf:li xml:lang="x-default">                               </rdf:li>
+    </rdf:Alt>
+   </dc:description>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>
