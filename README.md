@@ -1,2 +1,3 @@
-# dcimp
-Digita Camer IMPort
+# DCIMP - Digital Camera IMPort
+
+Under development...
