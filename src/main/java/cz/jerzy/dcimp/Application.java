@@ -18,12 +18,12 @@ import java.util.concurrent.Callable;
 
 @Command(name = "dcimp", mixinStandardHelpOptions = true, version = "dcimp 0.1",
         description = "Imports digital camera images to given directory.")
-public class DigitalCameraImport implements Callable<Integer> {
+public class Application implements Callable<Integer> {
 
     private static final SimpleDateFormat SDDF = new SimpleDateFormat("yyyy/MM/dd");
     private static final SimpleDateFormat FDDF = new SimpleDateFormat("HHmmss");
 
-    private final Logger log = LoggerFactory.getLogger(DigitalCameraImport.class);
+    private final Logger log = LoggerFactory.getLogger(Application.class);
 
     @Option(names = {"-o", "--out"}, description = "output directory")
     private Path outputDirectory;
@@ -31,22 +31,19 @@ public class DigitalCameraImport implements Callable<Integer> {
     @Parameters(paramLabel = "DIRECTORY", description = "one ore more directories to import")
     private Path[] inputDirectories;
 
-    private Storage storage;
+    private static final Application instance = new Application();
 
-    private static final DigitalCameraImport instance = new DigitalCameraImport();
-
-    public static DigitalCameraImport getInstance() {
+    public static Application getInstance() {
         return instance;
     }
 
     public static void main(String... args) {
-        int exitCode = new CommandLine(new DigitalCameraImport()).execute(args);
+        int exitCode = new CommandLine(new Application()).execute(args);
         System.exit(exitCode);
     }
 
     @Override
     public Integer call() {
-        storage = new Storage(outputDirectory);
         FileSystem.requireDirectory(outputDirectory);
         Arrays.stream(inputDirectories)
                 .peek(FileSystem::requireDirectory)

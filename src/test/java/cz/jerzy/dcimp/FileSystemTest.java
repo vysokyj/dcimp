@@ -72,7 +72,7 @@ class FileSystemTest {
 
         assertThat(mediaFile).isNotNull();
         assertThat(mediaFile.getCrateDate()).isNotNull();
-        assertThat(mediaFile.getSidecars()).isEmpty();
+        assertThat(mediaFile.getSidecars()).hasSize(1);
         assertThat(mediaFile.getType().isImage()).isTrue();
     }
 }
