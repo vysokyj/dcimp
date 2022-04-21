@@ -13,7 +13,7 @@ class FileSystemTest {
 
     @Test
     void getExtensionOf() {
-        Path path = Path.of("C:\\TEST\\IMG_001.ARW");
+        Path path = Path.of("TEST", "IMG_001.ARW");
 
         String result = FileSystem.getExtensionOf(path).orElse(null);
 
@@ -22,7 +22,7 @@ class FileSystemTest {
 
     @Test
     void getDosExtensionOf() {
-        Path path = Path.of("C:\\TEST\\001.mpeg");
+        Path path = Path.of("TEST", "001.mpeg");
 
         String result = FileSystem.getDosExtensionOf(path).orElse(null);
 
@@ -38,9 +38,9 @@ class FileSystemTest {
 
     @Test
     void isSidecarFile() {
-        Path p1 = Path.of("C:\\TEST\\IMG_001.ARW");
-        Path p2 = Path.of("C:\\TEST\\IMG_001.xmp");
-        Path p3 = Path.of("C:\\TEST\\IMG_001.ARW.xmp");
+        Path p1 = Path.of("TEST", "IMG_001.ARW");
+        Path p2 = Path.of("TEST", "IMG_001.xmp");
+        Path p3 = Path.of("TEST", "IMG_001.ARW.xmp");
 
         assertThat(FileSystem.isSidecarFile(p1, p2)).isTrue();
         assertThat(FileSystem.isSidecarFile(p1, p3)).isTrue();

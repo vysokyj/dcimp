@@ -24,10 +24,6 @@ mainClassName = 'cz.jerzy.dcimp.DigitalCameraImport'
 sourceCompatibility = 11
 targetCompatibility = 11
 
-compileJava {
-    options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
-}
-
 application {
     mainClassName(mainClassName)
 }
