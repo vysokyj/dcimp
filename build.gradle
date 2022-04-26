@@ -1,6 +1,7 @@
 plugins {
     id 'application'
     id 'idea'
+    id 'eclipse'
     id 'org.graalvm.buildtools.native' version '0.9.11'
     id 'io.freefair.lombok' version '6.3.0'
     id 'org.sonarqube' version '3.3'
@@ -48,6 +49,12 @@ idea {
     module {
         downloadJavadoc = true
         downloadSources = true
+    }
+}
+
+eclipse {
+    classpath {
+        defaultOutputDir = file('build/classes/main')
     }
 }
 
