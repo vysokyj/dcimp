@@ -116,7 +116,7 @@ public class FileSystem {
         try {
             mediaFile.setMetadata(ImageMetadataReader.readMetadata(mediaFile.getPath().toFile()));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ProcessException(e);
         }
     }
 
@@ -126,7 +126,7 @@ public class FileSystem {
                     .filter(sidecarFile -> isSupportedSidecarFile(mediaFile, sidecarFile))
                     .collect(Collectors.toSet()));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ProcessException(e);
         }
     }
 
@@ -136,7 +136,7 @@ public class FileSystem {
                     .map(FileSystem::readXmpMetadata)
                     .orElse(null));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ProcessException(e);
         }
     }
 
@@ -147,7 +147,7 @@ public class FileSystem {
             xmpReader.extract(Files.readAllBytes(path), xmpMetadata);
             return xmpMetadata;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ProcessException(e);
         }
     }
 
@@ -181,7 +181,7 @@ public class FileSystem {
             Files.copy(source, target);
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ProcessException(e);
         }
     }
 }

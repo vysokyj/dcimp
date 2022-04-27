@@ -37,7 +37,7 @@ public class MD5 {
             } while (numRead != -1);
             return complete.digest();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ProcessException(e);
         }
     }
 }
