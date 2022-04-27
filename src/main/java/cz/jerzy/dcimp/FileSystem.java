@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @UtilityClass
 public class FileSystem {
@@ -37,8 +38,8 @@ public class FileSystem {
         if (!Files.isRegularFile(path)) {
             return Collections.emptySet();
         }
-        try {
-            return Files.list(path.getParent())
+        try (Stream<Path> list = Files.list(path.getParent())) {
+            return list
                     .filter(tested -> !tested.equals(path))
                     .filter(tested -> isSidecarFile(path, tested))
                     .collect(Collectors.toSet());
@@ -140,7 +141,7 @@ public class FileSystem {
         }
     }
 
-    private static Metadata readXmpMetadata(Path path)  {
+    private static Metadata readXmpMetadata(Path path) {
         try {
             Metadata xmpMetadata = new Metadata();
             XmpReader xmpReader = new XmpReader();

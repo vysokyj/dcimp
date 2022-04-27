@@ -14,14 +14,15 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 
 @Command(name = "dcimp", mixinStandardHelpOptions = true, version = "dcimp 0.1",
         description = "Imports digital camera images to given directory.")
 public class Application implements Callable<Integer> {
 
-    private static final SimpleDateFormat SDDF = new SimpleDateFormat("yyyy/MM/dd");
-    private static final SimpleDateFormat FDDF = new SimpleDateFormat("HHmmss");
+    private final SimpleDateFormat sddf = new SimpleDateFormat("yyyy/MM/dd");
+    private final SimpleDateFormat fddf = new SimpleDateFormat("HHmmss");
 
     private final Logger log = LoggerFactory.getLogger(Application.class);
 
@@ -53,8 +54,8 @@ public class Application implements Callable<Integer> {
 
     private void importDirectory(Path path) {
         log.debug("Importing directory {}", path);
-        try {
-            Files.walk(path)
+        try (Stream<Path> walk = Files.walk(path)) {
+            walk
                     .filter(Files::isRegularFile)
                     .filter(FileSystem::isSupportedFile)
                     .forEach(this::importFile);
@@ -98,8 +99,8 @@ public class Application implements Callable<Integer> {
 
     private Path createOutputPath(MediaFile imported, int i) {
         String root = outputDirectory.toString();
-        String directory = SDDF.format(imported.getCrateDate());
-        String prefix = FDDF.format(imported.getCrateDate());
+        String directory = sddf.format(imported.getCrateDate());
+        String prefix = fddf.format(imported.getCrateDate());
         String extension = FileSystem.getUnixExtensionOf(imported.getPath()).orElse("");
         String filename = String.format("%s%02d%s", prefix, i, extension);
         return Path.of(root, directory, filename).normalize().toAbsolutePath();
