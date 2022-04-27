@@ -1,5 +1,6 @@
 plugins {
     id 'application'
+    id 'jacoco'
     id 'idea'
     id 'eclipse'
     id 'org.graalvm.buildtools.native' version '0.9.11'
@@ -61,4 +62,10 @@ eclipse {
 
 test {
     useJUnitPlatform()
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
 }
