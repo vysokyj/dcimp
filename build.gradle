@@ -69,7 +69,3 @@ jacocoTestReport {
         xml.enabled true
     }
 }
-
-tasks.named('sonarqube').configure {
-    dependsOn test
-}
