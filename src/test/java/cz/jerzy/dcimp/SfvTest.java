@@ -28,6 +28,7 @@ class SfvTest {
         Sfv sfv = Sfv.calculate(path);
 
         assertThat(sfv).isNotNull();
+        assertThat(sfv.getChecksum()).isEqualTo("374ABBA9");
     }
 
     @SneakyThrows

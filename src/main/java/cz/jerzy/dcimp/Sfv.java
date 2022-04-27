@@ -1,15 +1,20 @@
 package cz.jerzy.dcimp;
 
+import lombok.Data;
+
 import java.nio.file.Path;
 import java.util.zip.CRC32;
 
-import org.apache.commons.io.FileUtils;
+import static java.lang.Long.toHexString;
+import static org.apache.commons.io.FileUtils.checksum;
+import static org.apache.commons.lang3.StringUtils.upperCase;
 
+@Data
 public class Sfv {
     
     private Path checkedFile;
     private Path sfvFile;
-    private String sum;
+    private String checksum;
 
     /**
      * Crete CSF file.
@@ -49,7 +54,7 @@ public class Sfv {
 
     private void recalculate() {
         try {
-            sum = Long.toHexString(FileUtils.checksum(checkedFile.toFile(), new CRC32()).getValue());
+            checksum = upperCase(toHexString(checksum(checkedFile.toFile(), new CRC32()).getValue()));
         } catch (Exception e) {
             throw new ProcessException(e);
         }
