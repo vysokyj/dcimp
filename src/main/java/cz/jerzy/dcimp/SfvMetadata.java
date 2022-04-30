@@ -4,6 +4,7 @@ import lombok.*;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,8 +16,6 @@ import static org.apache.commons.lang3.StringUtils.*;
 @NoArgsConstructor
 @Builder
 public class SfvMetadata {
-
-    public static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
 
     private Date imported;
     private Date created;
@@ -91,16 +90,14 @@ public class SfvMetadata {
         if (s == null) {
             return null;
         }
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
-        return sdf.parse(s);
+        return Date.from(Instant.parse(date));
     }
 
     private String format(Date date) {
         if (date == null) {
             return "";
         }
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
-        return sdf.format(imported);
+        return date.toInstant().toString();
     }
 
 }
