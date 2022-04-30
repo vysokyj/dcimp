@@ -65,8 +65,8 @@ class FileSystemTest {
         assertThat(mediaFile.getOptionalSfvSidecarPath()).isNotEmpty();
         assertThat(mediaFile.getSfvMetadata()).isNotNull();
         assertThat(mediaFile.getSfvMetadata().getChecksums()).hasSize(1);
-        assertThat(mediaFile.getSfvMetadata().getCreated()).isEqualTo("2015-08-10T23:00:00.090");
-        assertThat(mediaFile.getSfvMetadata().getImported()).isEqualTo("2015-08-10T23:00:00.090");
+        assertThat(mediaFile.getSfvMetadata().getCreated()).isEqualTo("2015-08-10T23:00:00.090Z");
+        assertThat(mediaFile.getSfvMetadata().getImported()).isEqualTo("2015-08-10T23:00:00.090Z");
         assertThat(mediaFile.getSfvMetadata().getOriginal()).isEqualTo("DSC00053.ARW");
         assertThat(mediaFile.getSfvMetadata().getFilename()).isEqualTo("DSC00053.ARW");
         assertThat(mediaFile.getSfvMetadata().getChecksum()).isEqualTo("374ABBA9");
@@ -95,8 +95,8 @@ class FileSystemTest {
 
         assertThat(metadata).isNotNull();
         assertThat(metadata.getChecksums()).hasSize(1);
-        assertThat(metadata.getCreated()).isEqualTo("2015-08-10T23:00:00.090");
-        assertThat(metadata.getImported()).isEqualTo("2015-08-10T23:00:00.090");
+        assertThat(metadata.getCreated()).isEqualTo("2015-08-10T23:00:00.090Z");
+        assertThat(metadata.getImported()).isEqualTo("2015-08-10T23:00:00.090Z");
         assertThat(metadata.getOriginal()).isEqualTo("DSC00053.ARW");
         assertThat(metadata.getFilename()).isEqualTo("DSC00053.ARW");
         assertThat(metadata.getChecksum()).isEqualTo("374ABBA9");
