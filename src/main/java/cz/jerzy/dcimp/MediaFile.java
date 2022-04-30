@@ -33,6 +33,7 @@ public class MediaFile {
     private Set<Path> sidecars;
     private Metadata metadata;
     private Metadata xmpMetadata;
+    private SfvMetadata sfvMetadata;
     private String checksum;
 
     private final XMPUtility xmpUtility = new XMPUtility();
@@ -93,6 +94,12 @@ public class MediaFile {
     public Optional<Path> getOptionalXmpSidecarPath() {
         return sidecars.stream()
                 .filter(p -> p.getFileName().toString().toUpperCase().endsWith(".XMP"))
+                .findFirst();
+    }
+
+    public Optional<Path> getOptionalSfvSidecarPath() {
+        return sidecars.stream()
+                .filter(p -> p.getFileName().toString().toUpperCase().endsWith(".SFV"))
                 .findFirst();
     }
 

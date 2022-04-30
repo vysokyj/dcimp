@@ -8,7 +8,8 @@ import java.util.Set;
 public enum MediaType {
     NEF,
     ARW,
-    JPG;
+    JPG,
+    SFV;
 
     private static final Set<MediaType> IMAGES = Set.of(NEF, ARW, JPG);
     private static final Set<MediaType> RAW_IMAGES = Set.of(NEF, ARW);
@@ -19,6 +20,10 @@ public enum MediaType {
 
     public boolean isRawImage() {
         return RAW_IMAGES.contains(this);
+    }
+
+    public boolean isChecksum() {
+        return SFV.equals(this);
     }
 
 }

@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 import static cz.jerzy.dcimp.FileSystem.requireRegularFile;
@@ -25,6 +26,7 @@ public class MD5 {
         return calculateChecksum(path).equals(checksum);
     }
 
+    @SneakyThrows
     static private byte[] digest(File file) {
         try (InputStream fis = new FileInputStream(file)) {
             byte[] buffer = new byte[1024];
@@ -36,8 +38,6 @@ public class MD5 {
                     complete.update(buffer, 0, numRead);
             } while (numRead != -1);
             return complete.digest();
-        } catch (Exception e) {
-            throw new ProcessException(e);
         }
     }
 }

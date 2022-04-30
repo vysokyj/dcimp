@@ -12,9 +12,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
+
+import static cz.jerzy.dcimp.FileSystem.calculateChecksum;
+import static cz.jerzy.dcimp.FileSystem.loadMediaFile;
+import static java.nio.file.Files.isRegularFile;
 
 
 @Command(name = "dcimp", mixinStandardHelpOptions = true, version = "dcimp 0.1",
@@ -81,8 +86,12 @@ public class Application implements Callable<Integer> {
     private boolean isAlreadyImported(MediaFile mediaFile) {
         for (int i = 0; i < 100; i++) {
             Path path = createOutputPath(mediaFile, i);
-            if (Files.isRegularFile(path) && MD5.verifyChecksum(path, MD5.calculateChecksum(mediaFile.getPath())))
-                return true;
+            if (isRegularFile(path)) {
+                MediaFile storedFile = loadMediaFile(path);
+                return Objects.equals(
+                        storedFile.getSfvMetadata().getChecksum(),
+                        mediaFile.getSfvMetadata().getChecksum());
+            }
         }
         return false;
     }

@@ -3,16 +3,23 @@ package cz.jerzy.dcimp;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.xmp.XmpReader;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.CRC32;
+
+import static java.lang.Long.toHexString;
+import static java.nio.file.Files.readAllLines;
+import static java.nio.file.Files.writeString;
+import static org.apache.commons.io.FileUtils.checksum;
+import static org.apache.commons.lang3.StringUtils.*;
 
 @UtilityClass
 public class FileSystem {
@@ -110,46 +117,64 @@ public class FileSystem {
         loadMetadata(mediaFile);
         loadSidecars(mediaFile);
         loadXmpMetadata(mediaFile);
+        loadSvfMetadata(mediaFile);
         return mediaFile;
     }
 
+    @SneakyThrows
     private static void loadMetadata(MediaFile mediaFile) {
-        try {
-            mediaFile.setMetadata(ImageMetadataReader.readMetadata(mediaFile.getPath().toFile()));
-        } catch (Exception e) {
-            throw new ProcessException(e);
-        }
+        mediaFile.setMetadata(ImageMetadataReader.readMetadata(mediaFile.getPath().toFile()));
     }
 
+    @SneakyThrows
     private static void loadSidecars(MediaFile mediaFile) {
-        try {
-            mediaFile.setSidecars(FileSystem.getSidecarFiles(mediaFile.getPath()).stream()
-                    .filter(sidecarFile -> isSupportedSidecarFile(mediaFile, sidecarFile))
-                    .collect(Collectors.toSet()));
-        } catch (Exception e) {
-            throw new ProcessException(e);
-        }
+        mediaFile.setSidecars(FileSystem.getSidecarFiles(mediaFile.getPath()).stream()
+                .filter(sidecarFile -> isSupportedSidecarFile(mediaFile, sidecarFile))
+                .collect(Collectors.toSet()));
     }
 
+    @SneakyThrows
     private static void loadXmpMetadata(MediaFile mediaFile) {
-        try {
-            mediaFile.setXmpMetadata(mediaFile.getOptionalXmpSidecarPath()
-                    .map(FileSystem::readXmpMetadata)
-                    .orElse(null));
-        } catch (Exception e) {
-            throw new ProcessException(e);
-        }
+        mediaFile.setXmpMetadata(mediaFile.getOptionalXmpSidecarPath()
+                .map(FileSystem::readXmpMetadata)
+                .orElse(null));
     }
 
+    @SneakyThrows
     private static Metadata readXmpMetadata(Path path) {
-        try {
-            Metadata xmpMetadata = new Metadata();
-            XmpReader xmpReader = new XmpReader();
-            xmpReader.extract(Files.readAllBytes(path), xmpMetadata);
-            return xmpMetadata;
-        } catch (Exception e) {
-            throw new ProcessException(e);
-        }
+        Metadata xmpMetadata = new Metadata();
+        XmpReader xmpReader = new XmpReader();
+        xmpReader.extract(Files.readAllBytes(path), xmpMetadata);
+        return xmpMetadata;
+    }
+
+    @SneakyThrows
+    private static void loadSvfMetadata(MediaFile mediaFile) {
+        mediaFile.setSfvMetadata(mediaFile.getOptionalSfvSidecarPath()
+                .map(FileSystem::loadSvfMetadata)
+                .orElseGet(() -> createSfvMetadata(mediaFile)));
+    }
+
+    @SneakyThrows
+    public static SfvMetadata createSfvMetadata(MediaFile mediaFile) {
+        String filename = mediaFile.getPath().getFileName().toString();
+        String checksum = calculateChecksum(mediaFile.getPath());
+        SfvMetadata metadata = new SfvMetadata();
+        metadata.setImported(new Date());
+        metadata.setCreated(mediaFile.getCrateDate());
+        metadata.setOriginal(filename);
+        metadata.setChecksums(Collections.singletonList(Pair.of(filename, checksum)));
+        return metadata;
+    }
+
+    @SneakyThrows
+    public static SfvMetadata loadSvfMetadata(Path path) {
+       return new SfvMetadata(readAllLines(path));
+    }
+
+    @SneakyThrows
+    public static void saveSfvMetadata(Path path, SfvMetadata metadata) {
+        writeString(path, metadata.toString());
     }
 
     public static boolean isSidecar(Path source, Set<Path> sidecars) {
@@ -172,17 +197,20 @@ public class FileSystem {
 
     private static boolean isSupportedSidecarFile(MediaFile mediaFile, Path sidecarFile) {
         String ext = FileSystem.getDosExtensionOf(sidecarFile).orElseThrow(IllegalArgumentException::new);
+        if (ext.equals(".SFV")) return true;
         if (mediaFile.getType().isRawImage() && ext.equals(".JPG")) return true;
         else return mediaFile.getType().isImage() && ext.equals(".XMP");
     }
 
+    @SneakyThrows
     public static void copy(Path source, Path target) {
-        try {
-            Files.createDirectories(target.getParent());
-            Files.copy(source, target);
-
-        } catch (Exception e) {
-            throw new ProcessException(e);
-        }
+        Files.createDirectories(target.getParent());
+        Files.copy(source, target);
     }
+
+    @SneakyThrows
+    public static String calculateChecksum(Path path) {
+        return upperCase(toHexString(checksum(path.toFile(), new CRC32()).getValue()));
+    }
+
 }
