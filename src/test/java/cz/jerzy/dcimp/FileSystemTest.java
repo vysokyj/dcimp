@@ -23,12 +23,57 @@ class FileSystemTest {
     }
 
     @Test
-    void getDosExtensionOf() {
+    void getDosExtensionOfMpeg() {
         Path path = Path.of("TEST", "001.mpeg");
 
         String result = FileSystem.getDosExtensionOf(path).orElse(null);
 
         assertThat(result).isEqualTo(".MPG");
+    }
+
+    @Test
+    void getDosExtensionOfJpeg() {
+        Path path = Path.of("TEST", "001.jpeg");
+
+        String result = FileSystem.getDosExtensionOf(path).orElse(null);
+
+        assertThat(result).isEqualTo(".JPG");
+    }
+
+    @Test
+    void getDosExtensionOfArw() {
+        Path path = Path.of("TEST", "001.arw");
+
+        String result = FileSystem.getDosExtensionOf(path).orElse(null);
+
+        assertThat(result).isEqualTo(".ARW");
+    }
+
+    @Test
+    void getUnixExtensionOfMpeg() {
+        Path path = Path.of("TEST", "001.MPG");
+
+        String result = FileSystem.getUnixExtensionOf(path).orElse(null);
+
+        assertThat(result).isEqualTo(".mpeg");
+    }
+
+    @Test
+    void getUnixExtensionOfJpeg() {
+        Path path = Path.of("TEST", "001.JPG");
+
+        String result = FileSystem.getUnixExtensionOf(path).orElse(null);
+
+        assertThat(result).isEqualTo(".jpeg");
+    }
+
+    @Test
+    void getUnixExtensionOfArw() {
+        Path path = Path.of("TEST", "001.ARW");
+
+        String result = FileSystem.getUnixExtensionOf(path).orElse(null);
+
+        assertThat(result).isEqualTo(".arw");
     }
 
     @Test
@@ -83,7 +128,7 @@ class FileSystemTest {
 
         assertThat(mediaFile).isNotNull();
         assertThat(mediaFile.getCrateDate()).isNotNull();
-        assertThat(mediaFile.getSidecars()).hasSize(2);
+        assertThat(mediaFile.getSidecars()).hasSize(1);
         assertThat(mediaFile.getType().isImage()).isTrue();
     }
 
@@ -104,6 +149,25 @@ class FileSystemTest {
         assertThat(metadata.getChecksums().get(0).getValue()).isEqualTo("374ABBA9");
     }
 
+    @Test
+    void createSfvMetadata() {
+        final Path path = loadResourceAsPath("/samples/DSC_0382.NEF");
+        MediaFile mediaFile = new MediaFile();
+        mediaFile.setPath(path);
+
+        SfvMetadata metadata = FileSystem.createSfvMetadata(mediaFile);
+
+        assertThat(metadata).isNotNull();
+        assertThat(metadata.getChecksums()).hasSize(1);
+        assertThat(metadata.getCreated()).isNull();
+        assertThat(metadata.getImported()).isNotNull();
+        assertThat(metadata.getOriginal()).isEqualTo("DSC_0382.NEF");
+        assertThat(metadata.getFilename()).isEqualTo("DSC_0382.NEF");
+        assertThat(metadata.getChecksum()).isEqualTo("7DF8447D");
+        assertThat(metadata.getChecksums().get(0).getKey()).isEqualTo("DSC_0382.NEF");
+        assertThat(metadata.getChecksums().get(0).getValue()).isEqualTo("7DF8447D");
+    }
+
     @SneakyThrows
     @Test
     void saveSfvMetadata() {
@@ -118,6 +182,18 @@ class FileSystemTest {
         assertThat(outputMetadata).isNotNull();
         assertThat(inputMetadata).isEqualTo(outputMetadata);
         assertThat(inputMetadata.toString()).isEqualTo(outputMetadata.toString());
+    }
+
+    @SneakyThrows
+    @Test
+    void copy() {
+        final Path source = loadResourceAsPath("/samples/DSC00053.sfv");
+        final Path target = Path.of(Files.createTempDirectory("copy").toString(), "DSC00053.sfv");
+
+        FileSystem.copy(source, target);
+
+        assertThat(source).isRegularFile();
+        assertThat(target).isRegularFile();
     }
 
     @SneakyThrows
