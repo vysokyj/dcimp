@@ -3,7 +3,7 @@ plugins {
     id 'jacoco'
     id 'idea'
     id 'eclipse'
-    id 'org.graalvm.buildtools.native' version '0.9.11'
+    id 'org.graalvm.buildtools.native' version '0.9.13'
     id 'io.freefair.lombok' version '6.3.0'
     id 'org.sonarqube' version '3.3'
 }
@@ -33,10 +33,16 @@ application {
     mainClassName(mainClassName)
 }
 
-nativeBuild {
-    javaLauncher = javaToolchains.launcherFor {
-        languageVersion = JavaLanguageVersion.of(11)
-        vendor = JvmVendorSpec.matching("Oracle")
+graalvmNative {
+    //toolchainDetection = false
+    binaries {
+        main {
+            useFatJar = true
+            javaLauncher = javaToolchains.launcherFor {
+                languageVersion = JavaLanguageVersion.of(11)
+                vendor = JvmVendorSpec.matching("GraalVM Community")
+            }
+        }
     }
 }
 
