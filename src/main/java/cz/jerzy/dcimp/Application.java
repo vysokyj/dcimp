@@ -17,7 +17,6 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
-import static cz.jerzy.dcimp.FileSystem.calculateChecksum;
 import static cz.jerzy.dcimp.FileSystem.loadMediaFile;
 import static java.nio.file.Files.isRegularFile;
 
