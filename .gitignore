@@ -4,3 +4,7 @@ bin
 .gradle
 .idea
 *.log
+.classpath
+.factorypath
+.project
+.settings
