@@ -12,13 +12,16 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
 @SpringBootApplication
-public class Application {
+public class Application implements ApplicationRunner {
 
     private final SimpleDateFormat sddf = new SimpleDateFormat("yyyy/MM/dd");
     private final SimpleDateFormat fddf = new SimpleDateFormat("HHmmss");
@@ -33,15 +36,15 @@ public class Application {
     }
 
     public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
         FileSystem.requireDirectory(outputDirectory);
         Arrays.stream(inputDirectories)
                 .peek(FileSystem::requireDirectory)
                 .forEach(this::importDirectory);
-    }
-
-    @Override
-    public void run(String... args) throws Exception {
-        main(args);
     }
 
     private void importDirectory(Path path) {
