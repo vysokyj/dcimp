@@ -25,7 +25,7 @@ dependencies {
 }
 
 version = '1.0.0-SNAPSHOT'
-mainClassName = 'cz.jerzy.dcimp.DigitalCameraImport'
+mainClassName = 'cz.jerzy.dcimp.Application'
 sourceCompatibility = 11
 targetCompatibility = 11
 
@@ -38,10 +38,10 @@ graalvmNative {
     binaries {
         main {
             useFatJar = true
-            javaLauncher = javaToolchains.launcherFor {
-                languageVersion = JavaLanguageVersion.of(11)
-                vendor = JvmVendorSpec.matching("GraalVM Community")
-            }
+            // javaLauncher = javaToolchains.launcherFor {
+            //     languageVersion = JavaLanguageVersion.of(11)
+            //     vendor = JvmVendorSpec.matching("GraalVM Community")
+            // }
         }
     }
 }
