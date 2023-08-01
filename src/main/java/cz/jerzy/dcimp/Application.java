@@ -1,12 +1,8 @@
 package cz.jerzy.dcimp;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
+import static cz.jerzy.dcimp.FileSystem.loadMediaFile;
+import static java.nio.file.Files.isRegularFile;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,27 +10,23 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
-import static cz.jerzy.dcimp.FileSystem.calculateChecksum;
-import static cz.jerzy.dcimp.FileSystem.loadMediaFile;
-import static java.nio.file.Files.isRegularFile;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import lombok.extern.slf4j.Slf4j;
 
 
-@Command(name = "dcimp", mixinStandardHelpOptions = true, version = "dcimp 0.1",
-        description = "Imports digital camera images to given directory.")
-public class Application implements Callable<Integer> {
+@Slf4j
+@SpringBootApplication
+public class Application implements ApplicationRunner {
 
     private final SimpleDateFormat sddf = new SimpleDateFormat("yyyy/MM/dd");
     private final SimpleDateFormat fddf = new SimpleDateFormat("HHmmss");
 
-    private final Logger log = LoggerFactory.getLogger(Application.class);
-
-    @Option(names = {"-o", "--out"}, description = "output directory")
     private Path outputDirectory;
-
-    @Parameters(paramLabel = "DIRECTORY", description = "one ore more directories to import")
     private Path[] inputDirectories;
 
     private static final Application instance = new Application();
@@ -43,18 +35,16 @@ public class Application implements Callable<Integer> {
         return instance;
     }
 
-    public static void main(String... args) {
-        int exitCode = new CommandLine(new Application()).execute(args);
-        System.exit(exitCode);
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
     }
 
     @Override
-    public Integer call() {
+    public void run(ApplicationArguments args) throws Exception {
         FileSystem.requireDirectory(outputDirectory);
         Arrays.stream(inputDirectories)
                 .peek(FileSystem::requireDirectory)
                 .forEach(this::importDirectory);
-        return 0;
     }
 
     private void importDirectory(Path path) {
@@ -114,5 +104,4 @@ public class Application implements Callable<Integer> {
         String filename = String.format("%s%02d%s", prefix, i, extension);
         return Path.of(root, directory, filename).normalize().toAbsolutePath();
     }
-
 }

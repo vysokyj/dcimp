@@ -2,31 +2,26 @@ package cz.jerzy.dcimp.xmp;
 
 import com.adobe.internal.xmp.XMPMeta;
 import com.adobe.internal.xmp.impl.XMPMetaImpl;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
+import com.drew.metadata.exif.ExifIFD0Directory;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.xmp.XmpDirectory;
-import cz.jerzy.dcimp.xmp.convertors.*;
+import cz.jerzy.dcimp.xmp.convertors.ExifIFD0DirectoryConvertor;
+import cz.jerzy.dcimp.xmp.convertors.ExifSubIFDDirectoryConvertor;
 
-import java.util.*;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 // http://www.npes.org/pdf/xmpspecification-Jun05.pdf
 // https://exiv2.org/conversion.html
 // https://exiftool.org/TagNames/XMP.html
 public class XMPUtility {
 
-    private final Set<XMPTagConverter> converters = Set.of(
-            new ExifCompression(),
-            new ExifMake(),
-            new ExifModel(),
-            new ExifSubFNumber(),
-            new ExifOrientation(),
-            new ExifSubExifImageHeight(),
-            new ExifSubExifImageWidth(),
-            new ExifXResolution(),
-            new ExifYResolution(),
-            new ExifSoftware(),
-            new SonyMakernoteRating()
-    );
+    private final ExifIFD0DirectoryConvertor exifIFD0DirectoryConvertor = new ExifIFD0DirectoryConvertor();
+    private final ExifSubIFDDirectoryConvertor exifSubIFDDirectoryConvertor = new ExifSubIFDDirectoryConvertor();
 
     /**
      * Converts internal metadata to XMP metadata.
@@ -57,18 +52,17 @@ public class XMPUtility {
 
     private SortedSet<XMPTag> extractXMPTags(Metadata metadata) {
         SortedSet<XMPTag> set = new TreeSet<>();
-        metadata.getDirectories()
-                .forEach(directory -> directory.getTags()
-                        .forEach(tag -> getOptionalTagConverter(tag)
-                                .ifPresent(converter -> set.addAll(converter.convert(tag)))));
+        for (Directory directory : metadata.getDirectories()) {
+            for (Tag tag : directory.getTags()) {
+                if (directory instanceof ExifIFD0Directory) {
+                    set.addAll(exifIFD0DirectoryConvertor.convert((ExifIFD0Directory) directory, tag));
+                }
+                if (directory instanceof ExifSubIFDDirectory) {
+                    set.addAll(exifSubIFDDirectoryConvertor.convert((ExifSubIFDDirectory) directory, tag));
+                }
+            }
+        }
         return set;
-    }
-
-    private Optional<XMPTagConverter> getOptionalTagConverter(Tag tag) {
-        return converters.stream()
-                .filter(converter -> converter.getDirectoryName().equals(tag.getDirectoryName()))
-                .filter(converter -> converter.getTagName().equals(tag.getTagName()))
-                .findFirst();
     }
 
 }

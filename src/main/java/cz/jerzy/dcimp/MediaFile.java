@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -52,8 +53,12 @@ public class MediaFile {
         if (metadata == null) return;
         for (Directory directory : metadata.getDirectories()) {
             for (Tag tag : directory.getTags()) {
-                System.out.format("[%s] - %s = %s\n",
-                        directory.getName(), tag.getTagName(), tag.getDescription());
+                System.out.format("%s [%s] - %s = %s\n",
+                        tag.getTagTypeHex(),
+                        directory.getName(),
+                        tag.getTagName(),
+                        tag.getDescription()
+                );
             }
             if (directory.hasErrors()) {
                 for (String error : directory.getErrors()) {
@@ -74,12 +79,10 @@ public class MediaFile {
         xmpMetadata = xmpUtility.convert(metadata, tags);
     }
 
+    @SneakyThrows
     public void printXmpMetadata() {
-        try (PrintStream outputStream = new PrintStream(System.out, true, StandardCharsets.UTF_8)) {
-            XmpWriter.write(outputStream, xmpMetadata);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        PrintStream outputStream = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        XmpWriter.write(outputStream, xmpMetadata);
     }
 
     public String getXmpMetadataAsString() {
